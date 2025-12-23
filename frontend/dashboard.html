@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CampusGo - Live Tracking</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+
+    <div class="header">🚍 CampusGo - Live Bus Tracking</div>
+
+    <div id="map"></div>
+
+    <div id="eta-box">
+        <h4>Next Stop ETA</h4>
+        <div id="eta-content">Select a bus...</div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
