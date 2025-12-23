@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Routes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="header">🧭 Manage Routes</div>
+
+    <h3 style="padding:10px;">Add Route</h3>
+
+    <form id="routeForm" style="padding:10px;">
+        <input type="text" id="route_name" placeholder="Route Name">
+        <input type="text" id="route_desc" placeholder="Description">
+
+        <button type="button" onclick="addRoute()">Add Route</button>
+    </form>
+
+    <hr>
+
+    <h3 style="padding:10px;">Existing Routes</h3>
+    <div id="routeList" style="padding:10px;"></div>
+
+    <script>
+        function loadRoutes() {
+            fetch("/api/routes")
+                .then(res => res.json())
+                .then(data => {
+                    let html = "";
+                    data.forEach(r => {
+                        html += `<p>${r.id}. ${r.name} - ${r.description}</p>`;
+                    });
+
+                    document.getElementById("routeList").innerHTML = html;
+                });
+        }
+
+        function addRoute() {
+            let payload = {
+                name: document.getElementById("route_name").value,
+                description: document.getElementById("route_desc").value
+            };
+
+            fetch("/api/routes/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(msg => {
+                    alert(msg.status);
+                    loadRoutes();
+                });
+        }
+
+        loadRoutes();
+    </script>
+
+</body>
+
+</html>

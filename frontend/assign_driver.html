@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Assign Driver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="header">🧑‍✈️ Assign Driver</div>
+
+    <form style="padding:10px;">
+        <input type="number" id="user_id" placeholder="Driver User ID">
+        <input type="number" id="bus_id" placeholder="Bus ID">
+
+        <button type="button" onclick="assignDriver()">Assign</button>
+    </form>
+
+    <script>
+        function assignDriver() {
+            let payload = {
+                user_id: document.getElementById("user_id").value,
+                bus_id: document.getElementById("bus_id").value
+            };
+
+            fetch("/api/assign-driver", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(msg => alert(msg.status));
+        }
+    </script>
+
+</body>
+
+</html>

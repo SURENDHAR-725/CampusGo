@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Buses</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="header">🚌 Manage Buses</div>
+
+    <h3 style="padding:10px;">Add New Bus</h3>
+
+    <form style="padding:10px;" id="busForm">
+        <input type="text" id="bus_number" placeholder="Bus Number">
+        <input type="number" id="route_id" placeholder="Route ID">
+        <input type="number" id="capacity" placeholder="Capacity">
+
+        <button type="button" onclick="addBus()">Add Bus</button>
+    </form>
+
+    <hr>
+
+    <h3 style="padding:10px;">All Buses</h3>
+    <div id="busList" style="padding:10px;"></div>
+
+    <script>
+        function loadBuses() {
+            fetch("/api/buses")
+                .then(res => res.json())
+                .then(data => {
+                    let html = "";
+                    data.forEach(b => {
+                        html += `<p>${b.bus_number} - Route ${b.route_id} - Capacity: ${b.capacity}</p>`;
+                    });
+                    document.getElementById("busList").innerHTML = html;
+                });
+        }
+
+        function addBus() {
+            let payload = {
+                bus_number: document.getElementById("bus_number").value,
+                route_id: document.getElementById("route_id").value,
+                capacity: document.getElementById("capacity").value
+            };
+
+            fetch("/api/buses/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(msg => {
+                    alert(msg.status);
+                    loadBuses();
+                });
+        }
+
+        loadBuses();
+    </script>
+
+</body>
+
+</html>

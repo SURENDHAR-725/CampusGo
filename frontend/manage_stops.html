@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Stops</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="header">🚏 Manage Stops</div>
+
+    <h3 style="padding:10px;">Add Stop</h3>
+
+    <form style="padding:10px;">
+        <input type="number" id="route_id" placeholder="Route ID">
+        <input type="text" id="stop_name" placeholder="Stop Name">
+        <input type="text" id="lat" placeholder="Latitude">
+        <input type="text" id="lng" placeholder="Longitude">
+        <input type="number" id="order" placeholder="Order">
+
+        <button type="button" onclick="addStop()">Add Stop</button>
+    </form>
+
+    <hr>
+
+    <script>
+        function addStop() {
+            let payload = {
+                route_id: document.getElementById("route_id").value,
+                name: document.getElementById("stop_name").value,
+                latitude: document.getElementById("lat").value,
+                longitude: document.getElementById("lng").value,
+                stop_order: document.getElementById("order").value
+            };
+
+            fetch("/api/stops/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(msg => {
+                    alert(msg.status);
+                });
+        }
+    </script>
+
+</body>
+
+</html>
