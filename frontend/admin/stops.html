@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Stops</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Manage Stops</h2>
+
+        <div class="form-box">
+            <input type="number" id="route_id" placeholder="Route ID">
+            <input type="text" id="stop_name" placeholder="Stop Name">
+            <input type="text" id="lat" placeholder="Latitude">
+            <input type="text" id="lng" placeholder="Longitude">
+            <input type="number" id="order" placeholder="Order">
+            <button onclick="addStop()">Add Stop</button>
+        </div>
+
+        <h3>Stops List</h3>
+        <table id="stopTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Lat</th>
+                    <th>Lng</th>
+                    <th>Order</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+    <script>
+        const BASE_URL = "http://127.0.0.1:5000/admin/stop";
+
+        function loadStops() {
+            let rid = document.getElementById("route_id").value;
+            if (!rid) return;
+
+            fetch(BASE_URL + "/all/" + rid)
+                .then(res => res.json())
+                .then(data => {
+                    let rows = "";
+                    data.forEach(s => {
+                        rows += `
+            <tr>
+                <td>${s.stop_id}</td>
+                <td>${s.stop_name}</td>
+                <td>${s.latitude}</td>
+                <td>${s.longitude}</td>
+                <td>${s.stop_order}</td>
+                <td><button onclick="deleteStop(${s.stop_id})">Delete</button></td>
+            </tr>`;
+                    });
+                    document.querySelector("#stopTable tbody").innerHTML = rows;
+                });
+        }
+
+        function addStop() {
+            const body = {
+                route_id: document.getElementById("route_id").value,
+                stop_name: document.getElementById("stop_name").value,
+                latitude: document.getElementById("lat").value,
+                longitude: document.getElementById("lng").value,
+                stop_order: document.getElementById("order").value
+            };
+
+            fetch(BASE_URL + "/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(() => loadStops());
+        }
+
+        function deleteStop(id) {
+            fetch(BASE_URL + "/delete/" + id, {
+                    method: "DELETE"
+                })
+                .then(() => loadStops());
+        }
+    </script>
+
+</body>
+
+</html>

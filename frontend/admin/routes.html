@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Routes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Manage Routes</h2>
+
+        <div class="form-box">
+            <input type="text" id="route_name" placeholder="Route Name">
+            <button onclick="addRoute()">Add Route</button>
+        </div>
+
+        <h3>Existing Routes</h3>
+        <table id="routeTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+    <script>
+        const BASE_URL = "http://127.0.0.1:5000/admin/route";
+
+        function loadRoutes() {
+            fetch(BASE_URL + "/all")
+                .then(res => res.json())
+                .then(data => {
+                    let rows = "";
+                    data.forEach(r => {
+                        rows += `
+            <tr>
+                <td>${r.route_id}</td>
+                <td>${r.route_name}</td>
+                <td><button onclick="deleteRoute(${r.route_id})">Delete</button></td>
+            </tr>`;
+                    });
+                    document.querySelector("#routeTable tbody").innerHTML = rows;
+                });
+        }
+
+        function addRoute() {
+            const body = {
+                route_name: document.getElementById("route_name").value
+            };
+            fetch(BASE_URL + "/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(() => loadRoutes());
+        }
+
+        function deleteRoute(id) {
+            fetch(BASE_URL + "/delete/" + id, {
+                    method: "DELETE"
+                })
+                .then(() => loadRoutes());
+        }
+
+        loadRoutes();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Drivers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Manage Drivers</h2>
+
+        <div class="form-box">
+            <input type="text" id="name" placeholder="Driver Name">
+            <input type="text" id="phone" placeholder="Phone">
+            <input type="text" id="username" placeholder="Login Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="addDriver()">Add Driver</button>
+        </div>
+
+        <h3>Existing Drivers</h3>
+        <table id="driverTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Bus Assigned</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+    <script>
+        const BASE_URL = "http://127.0.0.1:5000/admin/driver";
+
+        function loadDrivers() {
+            fetch(BASE_URL + "/all")
+                .then(res => res.json())
+                .then(data => {
+                    let rows = "";
+                    data.forEach(d => {
+                        rows += `
+            <tr>
+                <td>${d.driver_id}</td>
+                <td>${d.name}</td>
+                <td>${d.phone}</td>
+                <td>${d.assigned_bus ?? 'None'}</td>
+            </tr>`;
+                    });
+                    document.querySelector("#driverTable tbody").innerHTML = rows;
+                });
+        }
+
+        function addDriver() {
+            const body = {
+                name: document.getElementById("name").value,
+                phone: document.getElementById("phone").value,
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value
+            };
+
+            fetch(BASE_URL + "/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(() => loadDrivers());
+        }
+
+        loadDrivers();
+    </script>
+
+</body>
+
+</html>
