@@ -20,6 +20,11 @@ def update_location():
     """, (bus_id, lat, lng, speed))
     conn.commit()
 
-    socketio.emit("bus_location", data)
+    socketio.emit("bus_location", {
+    "bus_id": bus_id,
+    "latitude": lat,
+    "longitude": lng
+})
+
 
     return {"status": "ok"}
