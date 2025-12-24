@@ -1,21 +1,21 @@
 import requests
 import time
-import random
 
-bus_id = 1
-lat = 12.9716
-lng = 77.5946
+BUS_ID = 1   # change if multiple buses
+
+coords = [
+    (12.9716, 77.5946),
+    (12.9721, 77.5950),
+    (12.9730, 77.5960),
+    (12.9740, 77.5970)
+]
 
 while True:
-    lat += random.uniform(-0.0005, 0.0005)
-    lng += random.uniform(-0.0005, 0.0005)
-
-    requests.post("http://localhost:5000/api/update-location", json={
-        "bus_id": bus_id,
-        "lat": lat,
-        "lng": lng,
-        "speed": random.randint(20, 40)
-    })
-
-    print("GPS sent:", lat, lng)
-    time.sleep(2)
+    for lat, lng in coords:
+        requests.post("http://127.0.0.1:5000/update_location", json={
+            "bus_id": BUS_ID,
+            "latitude": lat,
+            "longitude": lng
+        })
+        print("GPS sent:", lat, lng)
+        time.sleep(2)

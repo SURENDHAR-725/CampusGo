@@ -4,27 +4,30 @@ from db import get_db
 
 tracking = Blueprint("tracking", __name__)
 
-@tracking.route("/api/update-location", methods=["POST"])
+@tracking.route("/update_location", methods=["POST"])
 def update_location():
     data = request.json
     bus_id = data["bus_id"]
-    lat = data["lat"]
-    lng = data["lng"]
-    speed = data["speed"]
+    lat = data["latitude"]
+    lng = data["longitude"]
 
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO bus_locations (bus_id, latitude, longitude, speed)
-        VALUES (%s, %s, %s, %s)
-    """, (bus_id, lat, lng, speed))
-    conn.commit()
+    # save to DB
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+        INSERT INTO bus_location (bus_id, latitude, longitude)
+        VALUES (%s, %s, %s)
+    """, (bus_id, lat, lng))
+    db.commit()
 
+    cursor.close()
+    db.close()
+
+    # send to frontend via websocket
     socketio.emit("bus_location", {
-    "bus_id": bus_id,
-    "latitude": lat,
-    "longitude": lng
-})
+        "bus_id": bus_id,
+        "latitude": lat,
+        "longitude": lng
+    })
 
-
-    return {"status": "ok"}
+    return jsonify({"status": "ok"})
