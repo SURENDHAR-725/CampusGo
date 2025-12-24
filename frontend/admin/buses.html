@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Buses</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Manage Buses</h2>
+
+        <div class="form-box">
+            <input type="text" id="bus_number" placeholder="Bus Number">
+            <input type="number" id="capacity" placeholder="Capacity">
+            <button onclick="addBus()">Add Bus</button>
+        </div>
+
+        <h3>Existing Buses</h3>
+        <table id="busTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bus Number</th>
+                    <th>Capacity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+    <script>
+        const BASE_URL = "http://127.0.0.1:5000/admin/bus";
+
+        function loadBuses() {
+            fetch(BASE_URL + "/all")
+                .then(res => res.json())
+                .then(data => {
+                    let rows = "";
+                    data.forEach(bus => {
+                        rows += `
+                <tr>
+                    <td>${bus.bus_id}</td>
+                    <td>${bus.bus_number}</td>
+                    <td>${bus.capacity}</td>
+                    <td><button onclick="deleteBus(${bus.bus_id})">Delete</button></td>
+                </tr>
+            `;
+                    });
+                    document.querySelector("#busTable tbody").innerHTML = rows;
+                });
+        }
+
+        function addBus() {
+            const body = {
+                bus_number: document.getElementById("bus_number").value,
+                capacity: document.getElementById("capacity").value
+            };
+
+            fetch(BASE_URL + "/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(res => res.json())
+                .then(() => loadBuses());
+        }
+
+        function deleteBus(id) {
+            fetch(BASE_URL + "/delete/" + id, {
+                    method: "DELETE"
+                })
+                .then(() => loadBuses());
+        }
+
+        loadBuses();
+    </script>
+
+</body>
+
+</html>
